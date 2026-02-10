@@ -1,4 +1,5 @@
 import "./globals.css";
+import { ToastProvider } from "./components/Toast";
 export default function RootLayout({ children }: { children: any }) {
   return (
     <html className="light" lang="en">
@@ -7,7 +8,7 @@ export default function RootLayout({ children }: { children: any }) {
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-background-light dark:bg-background-dark text-primary dark:text-white font-display min-h-screen flex flex-col antialiased selection:bg-primary/10 dark:selection:bg-white/10">
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useToast } from "../../components/Toast";
 function slugifyTemplate(v: string) {
   return v.toLowerCase().replace(/\s+/g, "_");
 }
@@ -13,6 +14,7 @@ export default function SendMailPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
+  const { show } = useToast();
   useEffect(() => {
     const s = typeof window !== "undefined" ? window.localStorage.getItem("emailflow-draft") : null;
     if (s) {
@@ -79,9 +81,22 @@ export default function SendMailPage() {
     try {
       const res = await fetch("/api/send-email", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json().catch(() => ({}));
-      setMessage(res.ok ? "Email queued or sent via workflow" : `Error: ${data?.detail || res.statusText}`);
+      if (res.ok) {
+        setMessage("Email queued or sent via workflow");
+        show({
+          type: "success",
+          title: "Queued",
+          message: `ID ${data?.id || "—"} • ${data?.environment || "staging"}`,
+          duration: 5000,
+        });
+      } else {
+        const msg = `Error: ${data?.detail || res.statusText}`;
+        setMessage(msg);
+        show({ type: "error", title: "Failed", message: msg, duration: 6000 });
+      }
     } catch (e) {
       setMessage((e as any)?.message || "Network error");
+      show({ type: "error", title: "Network error", message: (e as any)?.message || "Check connection" });
     } finally {
       setLoading(false);
     }
