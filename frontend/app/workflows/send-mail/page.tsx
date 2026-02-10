@@ -85,9 +85,9 @@ export default function SendMailPage() {
         setMessage("Email queued or sent via workflow");
         show({
           type: "success",
-          title: "Queued",
-          message: `ID ${data?.id || "—"} • ${data?.environment || "staging"}`,
-          duration: 5000,
+          title: "Email Sent",
+          message: "Your email has been queued successfully",
+          duration: 4000,
         });
       } else {
         const msg = `Error: ${data?.detail || res.statusText}`;
